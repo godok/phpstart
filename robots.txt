@@ -1,0 +1,5 @@
+#
+# robots.txt for PHPstart
+#
+User-agent: * 
+Disallow: /
