@@ -18,6 +18,11 @@ class index{
         $dog = C('dog');
         $dog->talk();
     }
+    function dog2(){
+        echo "new index()->dog2()<br />";
+        $dog = C('dog','group2');
+        $dog->talk();
+    }
     function book(){
         echo "new index()->book()<br />";
         $book = M('book');

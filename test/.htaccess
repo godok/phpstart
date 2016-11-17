@@ -1,6 +1,0 @@
-<IfModule mod_rewrite.c>
-RewriteEngine on
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$ phpstart.php/$1 [QSA,PT,L]
-</IfModule>
-
