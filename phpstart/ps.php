@@ -168,7 +168,7 @@ class ps {
 	 * @param string $default  默认配置。当获取配置项目失败时该值发生作用。
 	 * @param boolean $reload 强制重新加载。
 	 */
-	public static function get_config( $key = '',$path = '', $default = '', $reload = false) {
+	public static function get_config( $key = '',$config_file = '', $default = '', $reload = false) {
 	    static $configs = array();
 	    $key_array = explode('.',$key);
 	    $file = array_shift($key_array);
@@ -191,15 +191,16 @@ class ps {
 	    empty($path_array[1]) && array_pop($path_array);
 	    //从目录开始往上遍历
 	    do{
-	        $temp_ = implode('/',$path_array);
+	        $temp_ = trim(implode('/',$path_array),'/');
 	        $config_file = empty($temp_) ? $root.'/config/'.$file.'.ini.php' : $root.'/'.$temp_.'/config/'.$file.'.ini.php';    
 	        if (file_exists($config_file)) {
-	            $configs[$key] = include $config_file;
+	            $key2 = md5($config_file);
+	            if (!isset($configs[$key2])) $configs[$key] = $configs[$key2] = include $config_file;
 	            if (empty($key_array)) {
 	                
-	                return $configs[$key];
+	                return $configs[$key2];
 	            } else {
-	                return get_array_value($configs[$key],$key_array,$default);
+	                return get_array_value($configs[$key2],$key_array,$default);
 	            }
 	            break;
 	        }else{
@@ -300,6 +301,7 @@ class ps {
 	    static $classes = array();
 	    if (empty($path)) $path = SCRIPT_PATH;
 	    $key = md5($path.$classname);
+	    
 	    if (isset($classes[$key])) {
 	        if (!empty($classes[$key])) {
 	            return $classes[$key];
@@ -317,19 +319,20 @@ class ps {
 	    empty($path_array[1]) && array_pop($path_array);
 	    //从脚本所在目录开始往上遍历
 	    while(!empty($path_array)){
-	        $temp_ = implode('/',$path_array);
+	        $temp_ = trim(implode('/',$path_array),'/');
 	        $script_name = empty($temp_) ? $root.'/class/'.$classname.'.class.php': $root.'/'.$temp_.'/class/'.$classname.'.class.php';
 	        if (file_exists($script_name)) {
-	  
-	            require_once $script_name;
+	            $key2 = md5($script_name);
+	            if (!isset($classes[$key2])) require_once $script_name;
+	    
 	            if ($initialize) {
     	            if(class_exists($classname)){
-    			        $classes[$key] = new $classname;
+    			        $classes[$key] = $classes[$key2] = new $classname;
     			    }else{
-    			        $classes[$key] = false;
+    			        $classes[$key] = $classes[$key2] = false;
     			    }
 	            } else {
-	                $classes[$key] = true;
+	                $classes[$key] = $classes[$key2] = true;
 	            }
 	            return $classes[$key];
 	        }
@@ -368,19 +371,19 @@ class ps {
 	    empty($path_array[1]) && array_pop($path_array);
 	    //从脚本所在目录开始往上遍历
 	    while(!empty($path_array)){
-	        $temp_ = implode('/',$path_array);
+	        $temp_ = trim(implode('/',$path_array),'/');
 	        $script_name = empty($temp_) ? $root.'/model/'.$modelname.'.mod.php': $root.'/'.$temp_.'/model/'.$modelname.'.mod.php';
 	        if (file_exists($script_name)) {
-	             
-	            require_once $script_name;
+	            $key2 = md5($script_name);
+	            if (!isset($models[$key2])) require_once $script_name;
 	            if ($initialize) {
 	                if(class_exists($modelname)){
-	                    $models[$key] = new $modelname;
+	                    $models[$key] = $models[$key2] = new $modelname;
 	                }else{
-	                    $models[$key] = false;
+	                    $models[$key] = $models[$key2] = false;
 	                }
 	            } else {
-	                $models[$key] = true;
+	                $models[$key] = $models[$key2] = true;
 	            }
 	            return $models[$key];
 	        }
@@ -412,11 +415,12 @@ class ps {
 	    empty($path_array[1]) && array_pop($path_array);
 	    //从脚本所在目录开始往上遍历
 	    while(!empty($path_array)){
-	        $temp_ = implode('/',$path_array);
+	        $temp_ = trim(implode('/',$path_array),'/');
 	        $script_name = empty($temp_) ? $root.'/function/'.$functionname.'.func.php': $root.'/'.$temp_.'/function/'.$functionname.'.func.php';
 	        if (file_exists($script_name )) {
-	            require_once $script_name ;
-	            $funcs[$key] = true;
+	            $key2 = md5($script_name);
+	            if (!isset($funcs[$key2])) require_once $script_name;
+	            $funcs[$key] = $funcs[$key2] = true;
 	            return $funcs[$key];
 	        }
 	        array_pop($path_array);
@@ -431,7 +435,7 @@ class ps {
 	 * @param string $path 路径
 	 */
 	public static function app_lib($libname, $path='') {
-	    static $funcs = array();
+	    static $libs = array();
 	    if (empty($path)) $path = SCRIPT_PATH;
 	    $key = md5($path.$libname);
 	    if (isset($libs[$key])) return true;
@@ -445,11 +449,12 @@ class ps {
 	    empty($path_array[1]) && array_pop($path_array);
 	    //从脚本所在目录开始往上遍历
 	    while(!empty($path_array)){
-	        $temp_ = implode('/',$path_array);
+	        $temp_ = trim(implode('/',$path_array),'/');
 	        $script_name = empty($temp_) ? $root.'/lib/'.$libname.'.php': $root.'/'.$temp_.'/lib/'.$libname.'.php';
 	        if (file_exists($script_name)) {
-	            require_once $script_name;
-	            $libs[$key] = true;
+	            $key2 = md5($script_name);
+	            if (!isset($libs[$key2])) require_once $script_name;
+	            $libs[$key] = $libs[$key2] = true;
 	            return $libs[$key];
 	        }
 	        array_pop($path_array);

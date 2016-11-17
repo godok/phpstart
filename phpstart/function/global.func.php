@@ -194,6 +194,14 @@ function F($functionname, $path='') {
 	return ps::app_func($functionname, $path);
 }
 /**
+ * 加载app类库
+ * @param string $functionname 函数库名
+ * @param string $path 路径
+ */
+function L($functionname, $path='') {
+    return ps::app_lib($functionname, $path);
+}
+/**
 * 加载配置文件
 * @param string $file 配置文件
 * @param string $key  要获取的配置荐

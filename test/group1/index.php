@@ -32,6 +32,7 @@ class index{
         echo "new index()->book()<br />";
         $book = M('book');
         $book->lists();
+        $book = M('book','/test');
     }
     function student(){
         echo "new index()->student()<br />";
@@ -42,6 +43,10 @@ class index{
         echo "new index()->myfunc()<br />";
         F('myfunc');
         myname();
+    }
+    function lib(){
+        echo "new index()->lib()<br />";
+        L('lib');
     }
     function cfg(){
         echo "new index()->cfg()<br />";
