@@ -8,3 +8,5 @@ phpstart希望解决的问题是：
 6.为php毕业的新手提供便利，不需要太高的学习成本
 
 [《PHPSTART开发手册》](http://www.kancloud.cn/fafa2088/phpstart/228415)
+
+godok.cn
