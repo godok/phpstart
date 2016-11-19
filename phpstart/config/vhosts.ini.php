@@ -7,7 +7,7 @@ defined('IS_RUN') or exit('/**error:404**/');
 return array(
 //程序目录绑定
 	array(
-		'domain'=>'127.0.01',
+		'host'=>'127.0.0.1',
 		'path'  =>'test'
 	)
 );

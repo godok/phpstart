@@ -27,7 +27,7 @@ function script_path($file){
 function my_error_handler($errno, $errstr, $errfile, $errline) {
    if($errno==8) return '';
    $errfile = str_replace(DOCUMENT_ROOT,'',str_replace('\\','/',$errfile));
-   if(ps::sys_config('system.errorlog')) {
+   if(ps::app_config('system.errorlog')) {
 	   error_log('<?php exit;?>'.date('m-d H:i:s',SYS_TIME).' | '.$errno.' | '.str_pad($errstr,30).' | '.$errfile.' | '.$errline."\r\n", 3, CACHE_PATH.'error_log.php');
    } else {
 	   $str = "<span>errorno:' . $errno . ',str:' . $errstr . ',file:<font color='blue'>' . $errfile . '</font>,line' . $errline .'<br /></span>";
@@ -58,7 +58,7 @@ function get_array_value($data,$key_array,$default){
 */
 function set_cookie($key, $value, $expire = '',$path='',$domain='',$httponly = '') {
 
-   $config = ps::sys_config('system.cookie');
+   $config = ps::app_config('system.cookie');
    $expire = $expire != '' ? $expire :  $config['expire'];
    $path = $path != '' ? $path :  $config['path'];
    $domain = $domain != '' ? $domain :  $config['domain'];
@@ -71,7 +71,7 @@ function set_cookie($key, $value, $expire = '',$path='',$domain='',$httponly = '
 * 读cookie
 */
 function get_cookie($key) {
-   $config = ps::sys_config('system.cookie');
+   $config = ps::app_config('system.cookie');
   
    return isset($_COOKIE[$config['pre'].$key])  ? $_COOKIE[$config['pre'].$key] : false;
 }
@@ -153,7 +153,7 @@ function json_message($msg='error',$code=0, $url_forward = '') {
 */
 function show_error($msg = 'error'){
     $str = '<html><head><title>error_message</title><style>body {	background-color: #fff;	margin: 30px;	font: 13px/20px ;	color: #333;}a {	color: #039;	background-color: transparent;	font-weight: normal;}h1 {	color: #444;	background-color: transparent;	border-bottom: 1px solid #D0D0D0;	font-size: 19px;	font-weight: normal;	margin: 0 0 14px 0;	padding: 14px 15px;}code {	font-size: 12px;	background-color: #f9f9f9;	border: 1px solid #D0D0D0;	color: #002166;	margin: 14px 0 ;	padding: 12px ;}#container {	margin: 10px;	border: 1px solid #D0D0D0;	-webkit-box-shadow: 0 0 8px #D0D0D0;}p {	margin: 12px 15px 12px 15px;}</style></head><body>	<div id="container">		<h1>Message!</h1>		<p>'.$msg.'</p></div></body></html>';
-    if(ps::sys_config("system.debug")) echo $str;
+    if(ps::app_config("system.debug")) echo $str;
     exit;
     
 }
@@ -209,7 +209,7 @@ function L($functionname, $path='') {
 * @param boolean $reload 强制重新加载。
 */
 function S($key = '',$path = '', $default = '', $reload = false) {
-    return ps::get_config( $key ,$path, $default, $reload );
+    return ps::app_config( $key ,$path, $default, $reload );
 }
 /**
 * 跳转页面
@@ -234,5 +234,6 @@ function X(&$arr) {
             }
         }
     }
+    return true;
 }
 ?>

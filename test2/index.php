@@ -6,7 +6,14 @@ class index{
     
     }
     function index(){
-        _302('/test/group1/index-dog');
+        echo "new index()->index()<br />";
+    }
+    function ck(){
+        echo CK('t').'<br />';
+        CK('t',time());
+    }
+    function error(){
+        json_message('error',0);
     }
 }
 ?>

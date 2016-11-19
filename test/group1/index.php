@@ -47,16 +47,23 @@ class index{
     function lib(){
         echo "new index()->lib()<br />";
         L('lib');
+        L('phpExcel/phpExcel.php');
     }
     function cfg(){
         echo "new index()->cfg()<br />";
-        $student = S('student.lists');
+        $student = ps::app_config('student.lists');
         echo $student;
     }
     function template(){
         include V('helloworld');
         echo '<br />';
         include V('helloworld','group2');
+    }
+    function get_cache(){
+        print_r( ps::get_cache('menu') );
+    }
+    function put_cache(){
+        echo 'filesize:'.ps::put_cache('menu',array('home','book'));
     }
 }
 ?>

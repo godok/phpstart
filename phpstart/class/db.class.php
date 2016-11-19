@@ -25,7 +25,7 @@ class DB {
 	}
 
 	public function __construct($name = 'master') {
-		$this->cfg = ps::get_config('database.'.$name);
+		$this->cfg = ps::app_config('database.'.$name);
 
 		$this->connect($name);
 	}
@@ -412,7 +412,7 @@ class DB {
 		if (strpos($sql, 'core_performance') > 0) {
 			return false;
 		}
-		$maxtimesql = ps::sys_config("database.maxtime");
+		$maxtimesql = ps::app_config("database.maxtime");
 		!$maxtimesql && $maxtimesql=6;
 
 		if ($runtime > $maxtimesql) {
