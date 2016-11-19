@@ -93,8 +93,8 @@ function CK($key, $value=NULL, $expire = '',$path='',$domain='',$httponly = '') 
 * @param $template
 * @param $path
 */
-function template($template = 'index', $path = '') {
-
+function template($template='', $path = '') {
+   if(empty($template)) $template = ACTION;
    if (empty($path)) $path = SCRIPT_PATH;
 	
    if(substr($template,0,1) == '/'){
@@ -173,7 +173,7 @@ function M($modelname, $path='',$initialize = 1) {
 * @param $istag
 * @return unknown_type
 */
-function V($template = 'index', $path = '') {
+function V($template = '', $path = '') {
   return template($template, $path );
 }
 /**

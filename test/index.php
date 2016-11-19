@@ -6,7 +6,15 @@ class index{
     
     }
     function index(){
-        echo "new index()->index()<br />";
+		ob_end_clean();
+		$time = time();
+		$dh = (int)date("H",$time);//时
+		$di = (int)date("i",$time);//分
+		$ds = (int)date("s",$time);//秒
+		$yci = "-".$ds;//分钟延迟
+		$ych =  "-".$di*60+$ds;//小时延迟
+		$words = ps::app_config('words');
+        include V();
     }
     function ck(){
         echo CK('t').'<br />';
