@@ -6,7 +6,8 @@ RewriteCond %{REQUEST_FILENAME} !phpstart\.php$ [NC]
 RewriteRule ^(.*)$ phpstart.php/$1 [QSA,PT,NC,L]
 # ---支持省略文件格式名-----------------------------------------
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-d [OR]
+RewriteCond %{REQUEST_URI} ^\/$
 RewriteRule ^(.*)$ phpstart.php/$1 [QSA,PT,NC,L]
 # ---伪静态-----------------------------------------------------
 RewriteCond %{REQUEST_FILENAME} !-f
