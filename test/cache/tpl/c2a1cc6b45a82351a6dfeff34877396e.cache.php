@@ -2,7 +2,6 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"/>
 <title>轻松开始php项目--PHPstart-成都骡子网络科技有限公司</title>
 <meta name="keywords" content="微信小程序,公众号,企业号,OA系统,WEB开发,webapp,安卓开发,ios开发,网站建设,设计">
 <meta name="description" content="信息系统集成服务；信息技术咨询服务（不含信息技术培训服务）；数据库里和储存服务；广告设计、制作、代理发布、企业营销策划；组织策划文化交流活动；会议及展现服务；多媒设计服务；美术团设计服务；销售:计算机软件及辅助设备">
@@ -11,13 +10,11 @@
 html,body{
 	margin:0;
 	padding:0;
-	font-size:12px;
 }
 body{
 	width:100%;
 	height:100%;
 	overflow:hidden;
-	
 }
 .changecolor{
 	background:#1b1e28;
@@ -31,27 +28,20 @@ animation: myanimate 6s infinite;
 {
 62%{background-color: #2e364e; }
 }
-
 @-moz-keyframes myanimate /* Firefox */
 {
 62%{background-color: #2e364e; }
 }
-
 @-webkit-keyframes myanimate /* Safari 和 Chrome */
 {
 62%{background-color: #2e364e; }
 }
-
 @-o-keyframes myanimate /* Opera */
 {
 62%{background-color: #2e364e; }
 }
-
-
-
 body {
-	font-size: 50%;
-	margin: 1em;
+
 	background: #232425;
 }
 ul {
@@ -62,13 +52,13 @@ ul {
 #watch {
 	font-size: .3em;
 	position: absolute;
-	left:1%;
-	top:1%;
-	transition: all 2s;
-	-moz-transition: all 2s; /* Firefox 4 */
-	-webkit-transition: all 2s; /* Safari 和 Chrome */
-	-o-transition: all 2s; /* Opera */
-	
+	left:5%;
+	top:5%;
+
+	transition: all 1s;
+	-moz-transition: all 1s; /* Firefox 4 */
+	-webkit-transition: all 1s; /* Safari 和 Chrome */
+	-o-transition: all 1s; /* Opera */
 }
 #watch .frame-face {
 	position: relative;
@@ -81,9 +71,7 @@ ul {
 	background: -webkit-linear-gradient(to bottom, #f9f9f9, #666);
 	background: linear-gradient(to bottom, #f9f9f9, #666);
 	box-shadow: rgba(0, 0, 0, .8) .5em .5em 4em;
-
 }
-
 #watch .frame-face:before {
 	content: '';
 	width: 29.4em;
@@ -223,7 +211,6 @@ ul {
 @-webkit-keyframes hours {
 to {
 -webkit-transform:rotate(<?php echo $dh*30+360;?>deg)
-
 }
 }
 @-moz-keyframes hours {
@@ -370,22 +357,6 @@ transform:rotate(<?php echo (int)$ds*6+360;?>deg)
 	left: -.35em;
 	bottom: -3em;
 }
-
-.footer {
-	text-align: center;
-	font: 12px "Open Sans Light", "Open Sans", "Segoe UI", Helvetica, Arial;
-}
-.footer a {
-	color: #999;
-	text-decoration: none;
-}
-.qq{
-	color:#fff;
-	text-align:center;
-	font-size:1.5em;
-	line-height:2em;
-}
-
 /****/
 #words{
 	position:absolute;
@@ -397,7 +368,7 @@ transform:rotate(<?php echo (int)$ds*6+360;?>deg)
 }
 span{
 	position:absolute;
-	font-size:80px;
+	font-size:6em;
 	transition: all 10s;
 	-moz-transition: all 10s; /* Firefox 4 */
 	-webkit-transition: all 10s; /* Safari 和 Chrome */
@@ -407,16 +378,15 @@ span{
 	word-break:break-all;
 	white-space:nowrap;
 }
-span>div{white-space: normal; word-break:break-strict;font-size:13px; max-width:20em; display:none; border-top:solid 1px #eee; padding:5px 0;}
-
+span>div{white-space: normal; word-break:break-strict;font-size:.8em; max-width:20em; display:none; border-top:solid 1px #eee; padding:5px 0;}
 span.small{
-	font-size:12px;
+	font-size:1em;
 	filter:alpha(opacity=0.2); 
 	-moz-opacity:0.2; 
 	opacity:0.2;
 }
 span.small:hover{
-	font-size:40px;
+	font-size:3em;
 	filter:alpha(opacity=1); 
 	-moz-opacity:1; 
 	opacity:1;
@@ -435,8 +405,9 @@ span.small:hover div{
 }
 
 #watch:hover{
-	font-size: .7em;
-	position: absolute;
+	font-size:1em;
+
+	
 }
 </style>
 <script>
@@ -454,8 +425,16 @@ var glbspan = false;
 		if(x.length>50) document.getElementById("words").removeChild(x[0]);
 		var span = document.createElement("span");
 		span.innerHTML = getWord();
-		span.style.left = Math.random()*90 + '%';
-		span.style.top = Math.random()*95 + '%';
+		if(Math.random() > 0.5){
+			span.style.left = Math.random()*60 + '%';
+		}else{
+			span.style.right = Math.random()*60 + '%';
+		}
+		if(Math.random() > 0.5){
+			span.style.top = Math.random()*80 + '%';
+		}else{
+			span.style.bottom = Math.random()*80 + '%';
+		}
         document.getElementById("words").appendChild(span);
 		glbspan = span;
 		setTimeout(function(){glbspan.className='small'},300);
@@ -465,12 +444,23 @@ var glbspan = false;
 		return words[i];
 	}
 	setTimeout("init()",300);
+	function hideWatch(){
+		document.getElementById("watch").className = 'smallwatch';
+	}
 	function init(){
 		for(var i=0;i<20;i++){
 			var span = document.createElement("span");
 			span.innerHTML = getWord();
-			span.style.left = Math.random()*95 + '%';
-			span.style.top = Math.random()*95 + '%';
+			if(Math.random() > 0.5){
+				span.style.left = Math.random()*60 + '%';
+			}else{
+				span.style.right = Math.random()*60 + '%';
+			}
+			if(Math.random() > 0.5){
+				span.style.top = Math.random()*80 + '%';
+			}else{
+				span.style.bottom = Math.random()*80 + '%';
+			}
 			span.className='small'
 			document.getElementById("words").appendChild(span);
 		}
@@ -481,8 +471,8 @@ var glbspan = false;
 </div>
 <div id="watch">
   <div class="frame-face"></div>
- 
-  
+
+
   <ul class="digits">
     <li>1</li><li>2</li><li>3</li><li>4</li><li>5</li><li>6</li><li>7</li><li>8</li><li>9</li><li>10</li><li>11</li><li>12</li>
   </ul>

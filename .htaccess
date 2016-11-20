@@ -1,7 +1,15 @@
 <IfModule mod_rewrite.c>
 RewriteEngine on
+# ---phpstart项目中，所有.php的文件都强制转交phpstart来处理-----
+RewriteCond %{REQUEST_FILENAME} \.php$ [NC]
+RewriteCond %{REQUEST_FILENAME} !phpstart\.php$ [NC]
+RewriteRule ^(.*)$ phpstart.php/$1 [QSA,PT,NC,L]
+# ---支持省略文件格式名-----------------------------------------
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_URI} \.(php|html|htm)$ [NC,OR]
-RewriteCond %{REQUEST_URI} !\..*$ [NC]
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ phpstart.php/$1 [QSA,PT,NC,L]
+# ---伪静态-----------------------------------------------------
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} \.(html|htm)$ [NC]
 RewriteRule ^(.*)$ phpstart.php/$1 [QSA,PT,NC,L]
 </IfModule>

@@ -16,7 +16,9 @@ defined('DOCUMENT_ROOT') or define('DOCUMENT_ROOT', trim(str_replace('\\','/',$_
 define('HTTP_HOST', (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ''));
 define('HTTP_REFERER', isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '');
 
-$path_info = isset($_SERVER['PATH_INFO']) ? trim(strtolower(str_replace('\\','/',$_SERVER['PATH_INFO'])),'/') : '';
+$path_info = isset($_SERVER['PATH_INFO']) ? strtolower(str_replace('\\','/',$_SERVER['PATH_INFO'])) : '';
+substr($path_info,-1) == '/' && $path_info .= 'index';
+$path_info = trim($path_info,'/');
 empty($path_info) && $path_info = 'index';
 
 if(strpos($path_info,'.') > 0){
