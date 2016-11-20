@@ -50,15 +50,16 @@ ul {
 	padding: 0;
 }
 #watch {
-	font-size: .3em;
+	-webkit-transform:scale(0.3);
 	position: absolute;
-	left:5%;
-	top:5%;
-
+	left:50%;
+	top:50%;
+	margin-left:-15em;
+	margin-top:-15em;
 	transition: all 1s;
-	-moz-transition: all 1s; /* Firefox 4 */
-	-webkit-transition: all 1s; /* Safari 和 Chrome */
-	-o-transition: all 1s; /* Opera */
+	-moz-transition: all .5s; /* Firefox 4 */
+	-webkit-transition: all .5s; /* Safari 和 Chrome */
+	-o-transition: all .5s; /* Opera */
 }
 #watch .frame-face {
 	position: relative;
@@ -405,7 +406,7 @@ span.small:hover div{
 }
 
 #watch:hover{
-	font-size:1em;
+	-webkit-transform:scale(1)
 
 	
 }
