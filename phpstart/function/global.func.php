@@ -96,22 +96,22 @@ function CK($key, $value=NULL, $expire = '',$path='',$domain='',$httponly = '') 
 function template($template='', $path = '') {
    if(empty($template)) $template = ACTION;
    if (empty($path)) $path = SCRIPT_PATH;
-	
+   if(substr($template,-4) != '.php' && substr($template,-5) != '.html') $template.='.html';
    if(substr($template,0,1) == '/'){
-	   $tpl_file = APP_ROOT.'/tpl'.$template.'.html';
+	   $tpl_file = APP_ROOT.'/tpl'.$template;
 	   
    }else{
 	   $path_array = empty($path) ? array('') : explode('/','/'.$path);
 	   //从脚本所在目录开始往上遍历
 	   while(!empty($path_array)){
 		   $temp_ = implode('/',$path_array);
-		   $tpl_file =empty($temp_) ? APP_ROOT.'/tpl/'.$template.'.html' : APP_ROOT.'/'.implode('/',$path_array).'/tpl/'.$template.'.html';
+		   $tpl_file =empty($temp_) ? APP_ROOT.'/tpl/'.$template : APP_ROOT.'/'.implode('/',$path_array).'/tpl/'.$template;
 		   if (file_exists($tpl_file)) break;
 		   array_pop($path_array);
 	   };
    }
    
-   if(!file_exists($tpl_file)) $tpl_file = PHPSTART_ROOT.'/tpl/'.trim($template,'/').'.html';
+   if(!file_exists($tpl_file)) $tpl_file = PHPSTART_ROOT.'/tpl/'.trim($template,'/');
    if(!file_exists($tpl_file)) show_error('templatefile:'.str_replace(DOCUMENT_ROOT,'',$tpl_file)." is not exists!");
    $cache_file = CACHE_PATH.'/tpl/'.md5($tpl_file).'.cache.php';
    if(!file_exists($cache_file) ||  filemtime($tpl_file) > filemtime($cache_file)) {
@@ -216,6 +216,14 @@ function S($key = '',$path = '', $default = '', $reload = false) {
 */
 function _302($url){
     header("Location: $url");
+    exit;
+}
+/**
+ * 跳转页面
+ */
+function _404($data = 'not found!'){
+    ob_end_clean();
+    include V('/404');
     exit;
 }
 /**

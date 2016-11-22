@@ -79,7 +79,7 @@ ps::app_config('system.errorlog') && set_error_handler('my_error_handler');
  * 初始化程序目录
  */
 if (!file_exists(APP_ROOT)){
-    echo '/**error**/';exit;
+    _404();exit;
 }
 if (!file_exists(APP_ROOT.'/config/database.ini.php')){
     ps::init();
@@ -132,7 +132,7 @@ class ps {
 	    if (file_exists($script_path.$script_name)) {     
 	        require_once $script_path.$script_name;
 	    }else{
-	        echo '/**not found php script**/';exit;
+	        _404();
 	    }
 	}
 	/**

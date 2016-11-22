@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
+
 <title>轻松开始php项目--PHPstart-成都骡子网络科技有限公司</title>
 <meta name="keywords" content="微信小程序,公众号,企业号,OA系统,WEB开发,webapp,安卓开发,ios开发,网站建设,设计">
 <meta name="description" content="信息系统集成服务；信息技术咨询服务（不含信息技术培训服务）；数据库里和储存服务；广告设计、制作、代理发布、企业营销策划；组织策划文化交流活动；会议及展现服务；多媒设计服务；美术团设计服务；销售:计算机软件及辅助设备">
@@ -50,7 +51,7 @@ ul {
 	padding: 0;
 }
 #watch {
-	-webkit-transform:scale(0.3);
+	-webkit-transform:scale(0.2);
 	position: absolute;
 	left:50%;
 	top:50%;
@@ -379,7 +380,7 @@ span{
 	word-break:break-all;
 	white-space:nowrap;
 }
-span>div{white-space: normal; word-break:break-strict;font-size:.8em; max-width:20em; display:none; border-top:solid 1px #eee; padding:5px 0;}
+span>div{white-space: normal; word-break:break-strict;font-size:.6em; max-width:20em; display:none; border-top:solid 1px #eee; padding:5px 0;}
 span.small{
 	font-size:1em;
 	filter:alpha(opacity=0.2); 
@@ -387,7 +388,7 @@ span.small{
 	opacity:0.2;
 }
 span.small:hover{
-	font-size:3em;
+	font-size:2.5em;
 	filter:alpha(opacity=1); 
 	-moz-opacity:1; 
 	opacity:1;
