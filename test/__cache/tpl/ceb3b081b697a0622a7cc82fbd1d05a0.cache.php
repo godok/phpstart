@@ -1,4 +1,4 @@
-<!doctype html>
+<?php defined('IS_RUN') or exit('No permission resources.'); ?><!doctype html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -380,12 +380,17 @@ span{
 	word-break:break-all;
 	white-space:nowrap;
 }
+
 span>div{white-space: normal; word-break:break-strict;font-size:.6em; max-width:20em; display:none; border-top:solid 1px #eee; padding:5px 0;}
 span.small{
 	font-size:1em;
 	filter:alpha(opacity=0.2); 
 	-moz-opacity:0.2; 
 	opacity:0.2;
+}
+a{text-decoration:none;}
+span>div a{
+	color:#069;
 }
 span.small:hover{
 	font-size:2.5em;
@@ -411,13 +416,19 @@ span.small:hover div{
 
 	
 }
+a.nav{
+	color:#fff;
+	position:absolute;
+	z-index:200;
+	font-size:1em;
+}
 </style>
 <script>
 var words = new Array(
-	{loop $words $w}
+	<?php $n=1;if(is_array($words)) foreach($words AS $w) { ?>
 	'phpstart.xyz',
-	'{$w}',
-	{/loop}
+	'<?php echo $w;?>',
+	<?php $n++;}unset($n); ?>
 	'PHPSTART'
 )
 var glbspan = false;
@@ -469,6 +480,8 @@ var glbspan = false;
 	}
 </script>
 <body class="changecolor">
+<a href="http://www.kancloud.cn/fafa2088/phpstart/228415" style="left: 1%; top: 5px;" class='nav'  target="_blank">《PHPstart开发手册》</a>
+<a href="http://www.kancloud.cn/fafa2088/phpstart/228415" style="left: 1%; top: 2em;" class='nav'  target="_blank">　下载PHPstart</a>
 <div id="words">
 </div>
 <div id="watch">

@@ -30,18 +30,18 @@ $app_root = DOCUMENT_ROOT;
 /**
  * 一级目录是app目录
  */
-if(file_exists($app_root.'/'.$path_array[0].'/config/database.ini.php')){
+if(file_exists($app_root.'/'.$path_array[0].'/__config/database.ini.php')){
     defined('APP_PATH') or define('APP_PATH', array_shift($path_array));//绑定的APP相对路径
     $app_root = $app_root.'/'.APP_PATH;
     
     empty($path_array) && $path_array=array('index');
 }else{
     defined('APP_PATH') or define('APP_PATH', ps::app_path());//绑定的APP相对路径
-    empty(APP_PATH) || $app_root = $app_root.'/'.APP_PATH;
+    APP_PATH=='' || $app_root = $app_root.'/'.APP_PATH;
 }
 
 defined('APP_ROOT') or define('APP_ROOT',$app_root);//app目录
-defined('CACHE_PATH') or define('CACHE_PATH', APP_ROOT.'/cache');//缓存目录
+defined('CACHE_PATH') or define('CACHE_PATH', APP_ROOT.'/__cache');//缓存目录
 
 $file = array_pop($path_array);
 define('SCRIPT_PATH',empty($path_array) ? '' : implode('/',$path_array));//URI路由
@@ -81,7 +81,7 @@ ps::app_config('system.errorlog') && set_error_handler('my_error_handler');
 if (!file_exists(APP_ROOT)){
     _404();exit;
 }
-if (!file_exists(APP_ROOT.'/config/database.ini.php')){
+if (!file_exists(APP_ROOT.'/__config/database.ini.php')){
     ps::init();
 }
 ps::runapp();//启动程序
@@ -122,10 +122,10 @@ class ps {
 	    $path_array =  explode('/',SCRIPT_PATH);
 	    $script_path = APP_ROOT.'/';
 	    do{
-	       if (file_exists($script_path.'_init.php')) require_once $script_path.'_init.php';
+	       if (file_exists($script_path.'__init.php')) require_once $script_path.'__init.php';
 	       $temp_ = array_shift($path_array);
 	       empty($temp_) || $script_path .= $temp_.'/';
-	       empty($path_array) && file_exists($script_path.'_init.php') && require_once $script_path.'_init.php';
+	       empty($path_array) && file_exists($script_path.'__init.php') && require_once $script_path.'__init.php';
 	    }while(!empty($path_array));
 	    unset($path_array);
 	    if($script_path.$script_name == $_SERVER['SCRIPT_FILENAME']) {echo '/**error**/';exit;}
@@ -153,7 +153,7 @@ class ps {
 	            return get_array_value($configs[$key],$key_array,$default);
 	        }
 	    }
-	    $config_file = PHPSTART_ROOT.'/config/'.$file.'.ini.php';
+	    $config_file = PHPSTART_ROOT.'/__config/'.$file.'.ini.php';
 	    if (file_exists($config_file)) {
 	        $configs[$key] = include $config_file;
 	        if (empty($key_array)) {
@@ -197,7 +197,7 @@ class ps {
 	    //从目录开始往上遍历
 	    do{
 	        $temp_ = trim(implode('/',$path_array),'/');
-	        $config_file = empty($temp_) ? $root.'/config/'.$file.'.ini.php' : $root.'/'.$temp_.'/config/'.$file.'.ini.php';    
+	        $config_file = empty($temp_) ? $root.'/__config/'.$file.'.ini.php' : $root.'/'.$temp_.'/__config/'.$file.'.ini.php';    
 	        if (file_exists($config_file)) {
 	            $key2 = md5($config_file);
 	            if (!isset($configs[$key2])) $configs[$key] = $configs[$key2] = include $config_file;
@@ -229,8 +229,8 @@ class ps {
 	            return true;
 	        }
 	    }
-	    if (file_exists(PHPSTART_ROOT.'/class/'.$classname.'.class.php')) {
-			require_once PHPSTART_ROOT.'/class/'.$classname.'.class.php';
+	    if (file_exists(PHPSTART_ROOT.'/__class/'.$classname.'.class.php')) {
+			require_once PHPSTART_ROOT.'/__class/'.$classname.'.class.php';
 			if ($initialize) {
 			    if(class_exists($classname)){
 			        $classes[$key] = new $classname;
@@ -261,8 +261,8 @@ class ps {
 	            return true;
 	        }
 	    }
-	    if (file_exists(PHPSTART_ROOT.'/model/'.$modelname.'.class.php')) {
-	        require_once PHPSTART_ROOT.'/model/'.$modelname.'.class.php';
+	    if (file_exists(PHPSTART_ROOT.'/__model/'.$modelname.'.class.php')) {
+	        require_once PHPSTART_ROOT.'/__model/'.$modelname.'.class.php';
 	        if ($initialize) {
 	            if(class_exists($modelname)){
 	                $models[$key] = new $modelname;
@@ -286,8 +286,8 @@ class ps {
 	    static $funcs = array();
 	    $key = md5($func);
 	    if (isset($funcs[$key])) return true;
-	    if (file_exists(PHPSTART_ROOT.'/function/'.$func.'.func.php')) {
-	        require_once PHPSTART_ROOT.'/function/'.$func.'.func.php';
+	    if (file_exists(PHPSTART_ROOT.'/__function/'.$func.'.func.php')) {
+	        require_once PHPSTART_ROOT.'/__function/'.$func.'.func.php';
 	    } else {
 	        $funcs[$key] = false;
 	        return false;
@@ -325,7 +325,7 @@ class ps {
 	    //从脚本所在目录开始往上遍历
 	    while(!empty($path_array)){
 	        $temp_ = trim(implode('/',$path_array),'/');
-	        $script_name = empty($temp_) ? $root.'/class/'.$classname.'.class.php': $root.'/'.$temp_.'/class/'.$classname.'.class.php';
+	        $script_name = empty($temp_) ? $root.'/__class/'.$classname.'.class.php': $root.'/'.$temp_.'/__class/'.$classname.'.class.php';
 	        if (file_exists($script_name)) {
 	            $key2 = md5($script_name);
 	            if (!isset($classes[$key2])) require_once $script_name;
@@ -378,7 +378,7 @@ class ps {
 	    //从脚本所在目录开始往上遍历
 	    while(!empty($path_array)){
 	        $temp_ = trim(implode('/',$path_array),'/');
-	        $script_name = empty($temp_) ? $root.'/model/'.$modelname.'.mod.php': $root.'/'.$temp_.'/model/'.$modelname.'.mod.php';
+	        $script_name = empty($temp_) ? $root.'/__model/'.$modelname.'.mod.php': $root.'/'.$temp_.'/__model/'.$modelname.'.mod.php';
 	        if (file_exists($script_name)) {
 	            $key2 = md5($script_name);
 	            if (!isset($models[$key2])) require_once $script_name;
@@ -423,7 +423,7 @@ class ps {
 	    //从脚本所在目录开始往上遍历
 	    while(!empty($path_array)){
 	        $temp_ = trim(implode('/',$path_array),'/');
-	        $script_name = empty($temp_) ? $root.'/function/'.$functionname.'.func.php': $root.'/'.$temp_.'/function/'.$functionname.'.func.php';
+	        $script_name = empty($temp_) ? $root.'/__function/'.$functionname.'.func.php': $root.'/'.$temp_.'/__function/'.$functionname.'.func.php';
 	        if (file_exists($script_name )) {
 	            $key2 = md5($script_name);
 	            if (!isset($funcs[$key2])) require_once $script_name;
@@ -460,7 +460,7 @@ class ps {
 	    //从脚本所在目录开始往上遍历
 	    while(!empty($path_array)){
 	        $temp_ = trim(implode('/',$path_array),'/');
-	        $script_name = empty($temp_) ? $root.'/lib/'.$libname: $root.'/'.$temp_.'/lib/'.$libname;
+	        $script_name = empty($temp_) ? $root.'/__lib/'.$libname: $root.'/'.$temp_.'/__lib/'.$libname;
 	        
 	        if (file_exists($script_name)) {
 	            $key2 = md5($script_name);
@@ -483,7 +483,7 @@ class ps {
 	    $path = trim($path,'/');
 	    if (empty($path)) $path = APP_PATH;
 	    if(substr($filename,-10) != '.cache.php') $filename.='.cache.php';
-	    $file = DOCUMENT_ROOT.'/'.$path.'/cache/'.$filename;
+	    $file = DOCUMENT_ROOT.'/'.$path.'/__cache/'.$filename;
 	    if (file_exists($file)) {
 	       $cache = include $file;
 	       return $cache;
@@ -500,7 +500,7 @@ class ps {
 	    $path = trim($path,'/');
 	    if (empty($path)) $path = APP_PATH;
 	    if(substr($filename,-10) != '.cache.php') $filename.='.cache.php';
-	    $file = DOCUMENT_ROOT.'/'.$path.'/cache/'.$filename;
+	    $file = DOCUMENT_ROOT.'/'.$path.'/__cache/'.$filename;
 	    $data = "<?php\ndefined('IS_RUN') or exit('/**error:404**/');\nreturn ".var_export($data, true).";\n?>";
 	    $size = @file_put_contents($file, $data, LOCK_EX);
 	    return $size ? $size : 'false';
@@ -513,7 +513,7 @@ class ps {
 	    if (!empty($configs)) {
 	        return  isset($configs[HTTP_HOST]) ? $configs[HTTP_HOST] : DEFAULT_APP;
 	    }
-	    $config_file = PHPSTART_ROOT.'/config/vhosts.ini.php';
+	    $config_file = PHPSTART_ROOT.'/__config/vhosts.ini.php';
         if (file_exists($config_file)) {
             $configs = include $config_file;
             foreach($configs as $app){
@@ -529,21 +529,21 @@ class ps {
 	 * 初始化程序目录
 	 */
 	public static function init(){
-	    if(!file_exists(APP_ROOT.'/cache/')) mkdir(APP_ROOT.'/cache');
-	    if(!file_exists(APP_ROOT.'/cache/tpl')) mkdir(APP_ROOT.'/cache/tpl');
-	    if(!file_exists(APP_ROOT.'/config/')) mkdir(APP_ROOT.'/config');
-	    if(!file_exists(APP_ROOT.'/function/')) mkdir(APP_ROOT.'/function');
-	    if(!file_exists(APP_ROOT.'/class/')) mkdir(APP_ROOT.'/class');
-	    if(!file_exists(APP_ROOT.'/model/')) mkdir(APP_ROOT.'/model');
-	    if(!file_exists(APP_ROOT.'/lib/')) mkdir(APP_ROOT.'/lib');
-	    if(!file_exists(APP_ROOT.'/tpl/')) mkdir(APP_ROOT.'/tpl');
-	    if(!file_exists(APP_ROOT.'/config/database.ini.php')){
-	       $str = @file_get_contents (PHPSTART_ROOT.'/config/database.ini.php');
-	       file_put_contents (APP_ROOT.'/config/database.ini.php', $str );
+	    if(!file_exists(APP_ROOT.'/__cache/')) mkdir(APP_ROOT.'/__cache');
+	    if(!file_exists(APP_ROOT.'/__cache/tpl')) mkdir(APP_ROOT.'/__cache/tpl');
+	    if(!file_exists(APP_ROOT.'/__config/')) mkdir(APP_ROOT.'/__config');
+	    if(!file_exists(APP_ROOT.'/__function/')) mkdir(APP_ROOT.'/__function');
+	    if(!file_exists(APP_ROOT.'/__class/')) mkdir(APP_ROOT.'/__class');
+	    if(!file_exists(APP_ROOT.'/__model/')) mkdir(APP_ROOT.'/__model');
+	    if(!file_exists(APP_ROOT.'/__lib/')) mkdir(APP_ROOT.'/__lib');
+	    if(!file_exists(APP_ROOT.'/__tpl/')) mkdir(APP_ROOT.'/__tpl');
+	    if(!file_exists(APP_ROOT.'/__config/database.ini.php')){
+	       $str = @file_get_contents (PHPSTART_ROOT.'/__config/database.ini.php');
+	       file_put_contents (APP_ROOT.'/__config/database.ini.php', $str );
 	    }
-	    if(!file_exists(APP_ROOT.'/config/system.ini.php')){
-	        $str = @file_get_contents (PHPSTART_ROOT.'/config/system.ini.php');
-	        file_put_contents (APP_ROOT.'/config/system.ini.php', $str );
+	    if(!file_exists(APP_ROOT.'/__config/system.ini.php')){
+	        $str = @file_get_contents (PHPSTART_ROOT.'/__config/system.ini.php');
+	        file_put_contents (APP_ROOT.'/__config/system.ini.php', $str );
 	    }
 	}
 	
