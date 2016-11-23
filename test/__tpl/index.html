@@ -481,7 +481,7 @@ var glbspan = false;
 </script>
 <body class="changecolor">
 <a href="http://www.kancloud.cn/fafa2088/phpstart/228415" style="left: 1%; top: 5px;" class='nav'  target="_blank">《PHPstart开发手册》</a>
-<a href="http://www.kancloud.cn/fafa2088/phpstart/228415" style="left: 1%; top: 2em;" class='nav'  target="_blank">　下载PHPstart</a>
+<a href="http://www.kancloud.cn/fafa2088/phpstart/234564" style="left: 1%; top: 2em;" class='nav'  target="_blank">　下载PHPstart</a>
 <div id="words">
 </div>
 <div id="watch">
