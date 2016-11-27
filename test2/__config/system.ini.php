@@ -3,7 +3,6 @@ defined('IS_RUN') or exit('/**error:404**/');
 return array(
 //网站路径
 'web_path' => '/',
-'suffix' => 'html',
 //Session配置
 'check_ip' => 1,//核对session的IP
 
@@ -25,6 +24,8 @@ return array(
 	'pre' => 'ps_', //Cookie 前缀，
 	'expire' => 3600, //Cookie 生命周期，0 表示随浏览器进程
 	'httponly' => false,//httponly
-)
+),
+//后缀
+'suffixes'=>array('php','html')
 );
 ?>

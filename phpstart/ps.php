@@ -17,15 +17,14 @@ define('HTTP_HOST', (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ''))
 define('HTTP_REFERER', isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '');
 
 $path_info = isset($_SERVER['PATH_INFO']) ? strtolower(str_replace('\\','/',$_SERVER['PATH_INFO'])) : '';
+$path_info = str_replace('.','/',$path_info);
 substr($path_info,-1) == '/' && $path_info .= 'index';
 $path_info = trim($path_info,'/');
 empty($path_info) && $path_info = 'index';
 
-if(strpos($path_info,'.') > 0){
-    $temp_ = explode('.',$path_info);
-    $path_info = $temp_[0];
-}
+
 $path_array = explode('/',$path_info);
+
 $app_root = DOCUMENT_ROOT;
 /**
  * 一级目录是app目录
@@ -43,7 +42,20 @@ if(file_exists($app_root.'/'.$path_array[0].'/__config/database.ini.php')){
 defined('APP_ROOT') or define('APP_ROOT',$app_root);//app目录
 defined('CACHE_PATH') or define('CACHE_PATH', APP_ROOT.'/__cache');//缓存目录
 
+/**
+ * 加载系统库
+ */
+ps::sys_func('global');
+ps::sys_func('pdo');
+ps::sys_class('phpstart');
+
 $file = array_pop($path_array);
+if(in_array($file,ps::app_config('system.suffixes',APP_PATH))) $file = array_pop($path_array);
+$temp_ = explode('-',$file);
+$temp_ = $temp_[0];
+if (!empty($path_array) && !file_exists(APP_ROOT.'/'.implode('/',$path_array).'/'.$temp_.'.php')){
+    $file = array_pop($path_array).'-'.$file;
+}
 define('SCRIPT_PATH',empty($path_array) ? '' : implode('/',$path_array));//URI路由
 define('SCRIPT_NAME',$file);//请求的php脚本
 unset($url_path);
@@ -51,12 +63,7 @@ unset($path_array);
 unset($temp_);
 unset($file);
 unset($app_root);
-/**
- * 加载系统库
- */
-ps::sys_func('global');
-ps::sys_func('pdo');
-ps::sys_class('phpstart');
+
 /**
  * SESSION安全，
  */
