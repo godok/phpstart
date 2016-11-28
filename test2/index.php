@@ -13,7 +13,7 @@ class index{
         CK('t',time());
     }
     function error(){
-        json_message('error',0);
+        ret_json(0,'error',1);
     }
 }
 ?>

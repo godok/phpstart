@@ -378,7 +378,7 @@ class DB {
 					load()->web('common');
 					load()->web('template');
 				}
-				message("SQL: <br/>{$append['sql']}<hr/>Params: <br/>{$params}<hr/>SQL Error: <br/>{$append['error'][2]}<hr/>Traces: <br/>{$ts}");
+				message("SQL: <br/>{$append['sql']}<br/>Params: <br/>{$params}<br/>SQL Error: <br/>{$append['error'][2]}<br/>Traces: <br/>{$ts}");
 			}
 		}
 		return $this->errors;

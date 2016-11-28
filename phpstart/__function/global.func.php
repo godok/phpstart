@@ -122,29 +122,98 @@ function template($template='', $path = '') {
 }
 /**
 * 提示信息页面跳转，跳转地址如果传入数组，页面会提示多个地址供用户选择，默认跳转地址为数组的第一个值，时间为3秒。
-* message('error', 'error',array('到首页'=>'/'));
-* @param string $msg 提示信息
-* @param string $style 消息类型
+* @param string 消息
+* @param int 错误代码，正确为0
 * @param mixed(string/array) $url_forward 跳转地址
 * @param int $ms 跳转等待时间，0为不跳转
 */
-function message($msg='error',$style='error', $url_forward = '', $ms = 3000) {
+function message($retMsg='error' ,$errNum=1, $url_forward = '',   $ms = 3000) {
+    if(IS_AJAX){
+        $retData = array(
+            'forward'=>$url_forward,
+            'ms'=>$ms
+        );
+        ret_json($retData,$retMsg, $errNum);
+    }
     include(template('/message'));
 	exit;
 }
+
+//数组转XML
+function xml_encode($arr,$root = 1,$mark='array')
+{
+    $xml = '';
+    foreach ($arr as $key=>$val)
+    {
+        
+        
+        if (is_array($val)){
+            
+            if(!is_numeric($key)){
+                $xml.='<'.$key.'>'.xml_encode($val,0,$key).'</'.$key.'>';
+            }else{
+                $xml.=xml_encode($val,0,$key);
+                if($key<count($arr)-1)  $xml.='</'.$mark.'><'.$mark.'>';
+    
+                
+            }
+            
+            
+        }elseif (is_numeric($val)){
+            if(is_numeric($key)) $key='array';
+            $xml.='<'.$key.'>'.$val.'</'.$key.'>';
+        }else{
+            if(is_numeric($key)) $key='array';
+            $xml.='<'.$key.'><![CDATA['.$val.']]></'.$key.'>';
+        }
+  
+    }
+    if($root) $xml = '<xml>'.$xml.'</xml>';
+
+    return $xml;
+}
+
+//将XML转为array
+function xml_decode($xml)
+{
+    //禁止引用外部xml实体
+    libxml_disable_entity_loader(true);
+    $values = json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
+    return $values;
+}
 /**
-* json_message('登录成功', 1,'/');
-* @param string $msg 提示信息
-* @param int $code 消息代码
-* @param mixed(string/array) $url_forward 跳转地址
-*/
-function json_message($msg='error',$code=0, $url_forward = '') {
+ * ret_json('登录成功', 'success',0);
+ * @param string|array 消息数据
+ * @param string 消息
+ * @param int 错误代码，正确为0
+ */
+function ret_xml($retData=array(),$retMsg='success' , $errNum=0,$charset = '') {
+    empty($charset) &&  $charset = CHARSET;
     $result = array(
-        'code'=>$code,
-        'data' =>$msg
+        'errNum'=>$errNum,
+        'retMsg' =>$retMsg,
+        'retData'=>$retData
     );
-    empty($url_forward) || $result['forward'] = $url_forward;
-    $code==0 && $result['error'] = $msg;
+    ob_end_clean();
+    header('Content-type: text/xml; charset='.$charset);
+    echo xml_encode($result);
+    exit;
+}
+/**
+ * ret_json('登录成功', 'success',0);
+ * @param string|array 消息数据
+ * @param string 消息
+* @param int 错误代码，正确为0
+ */
+function ret_json($retData=array(),$retMsg='success' , $errNum=0,$charset = '') {
+    empty($charset) &&  $charset = CHARSET;
+    $result = array(
+        'errNum'=>$errNum,
+        'retMsg' =>$retMsg,
+        'retData'=>$retData
+    );
+    ob_end_clean();
+    header('Content-type: application/json; charset='.$charset);
     echo json_encode($result);
     exit;
 }
@@ -152,7 +221,7 @@ function json_message($msg='error',$code=0, $url_forward = '') {
 * 系统错误消息
 */
 function show_error($msg = 'error'){
-    $str = '<html><head><title>error_message</title><style>body {	background-color: #fff;	margin: 30px;	font: 13px/20px ;	color: #333;}a {	color: #039;	background-color: transparent;	font-weight: normal;}h1 {	color: #444;	background-color: transparent;	border-bottom: 1px solid #D0D0D0;	font-size: 19px;	font-weight: normal;	margin: 0 0 14px 0;	padding: 14px 15px;}code {	font-size: 12px;	background-color: #f9f9f9;	border: 1px solid #D0D0D0;	color: #002166;	margin: 14px 0 ;	padding: 12px ;}#container {	margin: 10px;	border: 1px solid #D0D0D0;	-webkit-box-shadow: 0 0 8px #D0D0D0;}p {	margin: 12px 15px 12px 15px;}</style></head><body>	<div id="container">		<h1>Message!</h1>		<p>'.$msg.'</p></div></body></html>';
+    $str = '<html><head><title>error_message</title><style>body {	background-color: #fff;	margin: 30px;	font: 13px/20px ;	color: #333;}a {	color: #039;	background-color: transparent;	font-weight: normal;}h1 {	color: #fff;	background-color: #d9534f;	border-bottom: 1px solid #D0D0D0;	font-size: 19px;	font-weight: normal;	margin: 0 0 14px 0;	padding: 14px 15px;}#container {	margin: 10px;	border: 1px solid #D0D0D0;	-webkit-box-shadow: 0 0 8px #D0D0D0;}p {	margin: 12px 15px 12px 15px;}</style></head><body>	<div id="container">		<h1>Error!</h1>		<p>'.$msg.'</p></div></body></html>';
     if(ps::app_config("system.debug")) echo $str;
     exit;
     

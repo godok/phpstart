@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<?php defined('IS_RUN') or exit('No permission resources.'); ?><!DOCTYPE html>
 <html lang="en">
 <head>
 <title>message</title>
@@ -70,38 +70,38 @@ a{
 </style>
 </head>
 <body>
-	<div id="container" class="c{$errNum}">
-		<h1>{if $errNum > 0}错误！{else}消息：{/if}</h1>
-		<p>{$retMsg}</p>
+	<div id="container" class="c<?php echo $errNum;?>">
+		<h1><?php if($errNum > 0) { ?>错误！<?php } else { ?>消息：<?php } ?></h1>
+		<p><?php echo $retMsg;?></p>
         <p>
 	
-		{if is_array($url_forward)}
-			{loop $url_forward $k $v}
-			[<a href="{$v}">{$k}</a>]
-			{/loop}
-			{if $ms>0}
+		<?php if(is_array($url_forward)) { ?>
+			<?php $n=1; if(is_array($url_forward)) foreach($url_forward AS $k => $v) { ?>
+			[<a href="<?php echo $v;?>"><?php echo $k;?></a>]
+			<?php $n++;}unset($n); ?>
+			<?php if($ms>0) { ?>
         	<script>
 				setTimeout(function(){
-					location.href='{php echo array_shift($url_forward)}';
+					location.href='<?php echo array_shift($url_forward)?>';
 					},
-					{$ms}
+					<?php echo $ms;?>
 					)
 			</script>
-			{/if}
-        {elseif !empty($url_forward)}
-        [<a href="{$url_forward}">跳转</a>]
-			{if $ms>0}
+			<?php } ?>
+        <?php } elseif (!empty($url_forward)) { ?>
+        [<a href="<?php echo $url_forward;?>">跳转</a>]
+			<?php if($ms>0) { ?>
         	<script>
 				setTimeout(function(){
-					location.href='{$url_forward}';
+					location.href='<?php echo $url_forward;?>';
 					},
-					{$ms}
+					<?php echo $ms;?>
 					)
 			</script>
-			{/if}
-        {else}
+			<?php } ?>
+        <?php } else { ?>
         [<a href="javascript:history.go(-1)">返回</a>]
-        {/if}
+        <?php } ?>
         </p>
     </div>
 </body>

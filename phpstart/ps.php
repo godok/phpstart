@@ -10,11 +10,19 @@ define('IS_RUN', true);//
 if(!isset($_SESSION)) session_start();
 define('SYS_START_TIME', microtime());
 define('SYS_TIME', time());
+defined('PHPSTART_VERSION') or define('PHPSTART_VERSION', '1.0');//默认APP目录
 defined('DEFAULT_APP') or define('DEFAULT_APP', 'test');//默认APP目录
 define('PHPSTART_ROOT', dirname(__FILE__));//phpstart内核目录
 defined('DOCUMENT_ROOT') or define('DOCUMENT_ROOT', trim(str_replace('\\','/',$_SERVER['SCRIPT_FILENAME']),'/'));//phpstart项目根目录
 define('HTTP_HOST', (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ''));
 define('HTTP_REFERER', isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '');
+
+if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')
+{
+   defined('IS_AJAX') or define('IS_AJAX', TRUE);
+}else{
+   defined('IS_AJAX') or define('IS_AJAX', FALSE);
+}
 
 $path_info = isset($_SERVER['PATH_INFO']) ? strtolower(str_replace('\\','/',$_SERVER['PATH_INFO'])) : '';
 $path_info = str_replace('.','/',$path_info);
@@ -29,7 +37,7 @@ $app_root = DOCUMENT_ROOT;
 /**
  * 一级目录是app目录
  */
-if(file_exists($app_root.'/'.$path_array[0].'/__config/database.ini.php')){
+if(file_exists($app_root.'/'.$path_array[0].'/__config/database.ini.php') && !file_exists($app_root.'/'.$path_array[0].'/ps.sign')){
     defined('APP_PATH') or define('APP_PATH', array_shift($path_array));//绑定的APP相对路径
     $app_root = $app_root.'/'.APP_PATH;
     
@@ -47,7 +55,6 @@ defined('CACHE_PATH') or define('CACHE_PATH', APP_ROOT.'/__cache');//缓存目�
  */
 ps::sys_func('global');
 ps::sys_func('pdo');
-ps::sys_class('phpstart');
 
 $file = array_pop($path_array);
 if(in_array($file,ps::app_config('system.suffixes',APP_PATH))) $file = array_pop($path_array);
@@ -183,7 +190,7 @@ class ps {
 	    static $configs = array();
 	    $key_array = explode('.',$key);
 	    $file = array_shift($key_array);
-	    $path = trim($path,'/');
+	
 	    if (empty($path)) $path = SCRIPT_PATH;
 	    $key = md5($path.$file);
 	    if (!$reload && isset($configs[$key])) {
@@ -310,7 +317,7 @@ class ps {
 	 */
 	public static function app_class($classname, $path='',$initialize = 1) {
 	    static $classes = array();
-	    $path = trim($path,'/');
+	
 	    if (empty($path)) $path = SCRIPT_PATH;
 	    $key = md5($path.$classname);
 	    
@@ -321,6 +328,7 @@ class ps {
 	            return true;
 	        }
 	    }
+	    
 	    if(substr($path,0,1) == '/'){
 	        $root = DOCUMENT_ROOT;
 	        $path_array =  explode('/',$path);
@@ -333,6 +341,7 @@ class ps {
 	    while(!empty($path_array)){
 	        $temp_ = trim(implode('/',$path_array),'/');
 	        $script_name = empty($temp_) ? $root.'/__class/'.$classname.'.class.php': $root.'/'.$temp_.'/__class/'.$classname.'.class.php';
+	        
 	        if (file_exists($script_name)) {
 	            $key2 = md5($script_name);
 	            if (!isset($classes[$key2])) require_once $script_name;
@@ -364,7 +373,7 @@ class ps {
 	 */
 	public static function app_model($modelname, $path='',$initialize = 1) {
 	    static $models = array();
-	    $path = trim($path,'/');
+	   
 	    if (empty($path)) $path = SCRIPT_PATH;
 	    $key = md5($path.$modelname);
 	    if (isset($models[$key])) {
@@ -414,7 +423,7 @@ class ps {
 	 */
 	public static function app_func($functionname, $path='') {
 	    static $funcs = array();
-	    $path = trim($path,'/');
+	  
 	    if (empty($path)) $path = SCRIPT_PATH;
 	    $key = md5($path.$functionname);
 	    if (isset($funcs[$key])) return true;
@@ -450,7 +459,7 @@ class ps {
 	 */
 	public static function app_lib($libname, $path='') {
 	    static $libs = array();
-	    $path = trim($path,'/');
+	
 	    if (empty($path)) $path = SCRIPT_PATH;
 	    if(substr($libname,-4) != '.php') $libname.='.php';
 	    
