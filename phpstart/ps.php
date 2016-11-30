@@ -57,7 +57,7 @@ ps::sys_func('global');
 ps::sys_func('pdo');
 
 $file = array_pop($path_array);
-if(in_array($file,ps::app_config('system.suffixes',APP_PATH))) $file = array_pop($path_array);
+if(ps::app_config('system.suffixes',APP_PATH) && in_array($file,ps::app_config('system.suffixes',APP_PATH))) $file = array_pop($path_array);
 $temp_ = explode('-',$file);
 $temp_ = $temp_[0];
 if (!empty($path_array) && !is_file(APP_ROOT.'/'.implode('/',$path_array).'/'.$temp_.'.php')){
