@@ -26,25 +26,38 @@ if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUE
 
 $path_info = isset($_SERVER['PATH_INFO']) ? strtolower(str_replace('\\','/',$_SERVER['PATH_INFO'])) : '';
 $path_info = str_replace('.','/',$path_info);
-substr($path_info,-1) == '/' && $path_info .= 'index';
 $path_info = trim($path_info,'/');
-empty($path_info) && $path_info = 'index';
+if(empty($path_info)){
+    $path_array = array();
+}else{
+    $path_array = explode('/',$path_info);
+}
+
+//前置get变量
+$pre_get = ps::app_pre_get();
+foreach($pre_get as $key=>$val){
+    if(!empty($path_array)){
+        $_GET[$key] = array_shift($path_array);
+    }else{
+        $_GET[$key] = $val;
+    }
+}
 
 
-$path_array = explode('/',$path_info);
+empty($path_array) && $path_array = array('index');
 
 $app_root = DOCUMENT_ROOT;
 /**
  * 一级目录是app目录
  */
-if(is_file($app_root.'/'.$path_array[0].'/__config/database.ini.php') && !is_file($app_root.'/'.$path_array[0].'/ps.sign')){
+if(ps::app_path() == DEFAULT_APP && is_file($app_root.'/'.$path_array[0].'/__config/database.ini.php') && !is_file($app_root.'/'.$path_array[0].'/ps.sign')){
     defined('APP_PATH') or define('APP_PATH', array_shift($path_array));//绑定的APP相对路径
     $app_root = $app_root.'/'.APP_PATH;
     
     empty($path_array) && $path_array=array('index');
 }else{
     defined('APP_PATH') or define('APP_PATH', ps::app_path());//绑定的APP相对路径
-    APP_PATH=='' || $app_root = $app_root.'/'.APP_PATH;
+    APP_PATH!='' && $app_root = $app_root.'/'.APP_PATH;
 }
 
 defined('APP_ROOT') or define('APP_ROOT',$app_root);//app目录
@@ -55,17 +68,30 @@ defined('CACHE_PATH') or define('CACHE_PATH', APP_ROOT.'/__cache');//缓存目�
  */
 ps::sys_func('global');
 ps::sys_func('pdo');
+$params = array();
 
-$file = array_pop($path_array);
-if(ps::app_config('system.suffixes',APP_PATH) && in_array($file,ps::app_config('system.suffixes',APP_PATH))) $file = array_pop($path_array);
-$temp_ = explode('-',$file);
-$temp_ = $temp_[0];
-if (!empty($path_array) && !is_file(APP_ROOT.'/'.implode('/',$path_array).'/'.$temp_.'.php')){
-    $file = array_pop($path_array).'-'.$file;
-}
-define('SCRIPT_PATH',empty($path_array) ? '' : implode('/',$path_array));//URI路由
-define('SCRIPT_NAME',$file);//请求的php脚本
+while(!empty($path_array)){
+    $temp_ = trim(implode('/',$path_array),'/');
+    $script_name = APP_ROOT.'/'.$temp_.'/index.php';
+    if(empty($params) && is_file($script_name)){
+        define('SCRIPT_NAME','index');//请求的php脚本
+        break;
+    }
+    $script_name = APP_ROOT.'/'.$temp_.'.php';
+    if(is_file($script_name)){
+        define('SCRIPT_NAME',array_pop($path_array));//请求的php脚本
+        break;
+    }
+    array_unshift($params,array_pop($path_array));
+};
+
+defined('SCRIPT_NAME') or define('SCRIPT_NAME', 'index');//缓存目录
+define('SCRIPT_PATH',empty($path_array) ? '' : implode('/',$path_array));//脚本相对路径
+
+
 unset($url_path);
+unset($key);
+unset($val);
 unset($path_array);
 unset($temp_);
 unset($file);
@@ -98,7 +124,7 @@ if (!is_dir(APP_ROOT)){
 if (!is_file(APP_ROOT.'/__config/database.ini.php')){
     ps::init();
 }
-ps::runapp();//启动程序
+ps::runapp($params);//启动程序
 /**
  * phpstart核心类
  */
@@ -106,25 +132,29 @@ class ps {
 	/**
 	 * 初始化应用程序
 	 */
-	public static function runapp() {
+	public static function runapp($params=array()) {
 	    static $runtimes;
+	   
 	    if($runtimes) return false;//只能运行一次runapp
 	    $runtimes = true;
-		$file_array = explode('-',SCRIPT_NAME);
-		if(count($file_array) == 1 ) $file_array[1] = 'index';
-		$file = $file_array[0].'.php';
-		$classname = array_shift($file_array);
-		$funname = array_shift($file_array);
+		$classname = SCRIPT_NAME;
+		if(empty($params)){
+		    $funname = 'index';
+		}else{
+		    $funname = array_shift($params);
+		}
+
 		define('CONTROLLER',$classname);
 		define('ACTION',$funname);
-	    self::bin_file($file);
+		
+	    self::bin_file($classname);
 	    if(class_exists($classname)){ 
 	        $obj = new $classname;
 	        if(method_exists($obj,$funname)){
-	            if(empty($file_array)){
+	            if(empty($params)){
 	                $obj->$funname();
 	            }else{
-	                call_user_func_array(array($obj,$funname),$file_array);
+	                call_user_func_array(array($obj,$funname),$params);
 	            }
 	        }
 	    }
@@ -133,18 +163,28 @@ class ps {
 	 * 从bin加载入口脚本文件
 	 */
 	public static function bin_file($script_name){
-	    $path_array =  explode('/',SCRIPT_PATH);
+	 
+	    if(SCRIPT_PATH == ''){
+	        $path_array =  array();
+	    }else{
+	        $path_array =  explode('/',SCRIPT_PATH);
+	    }
 	    $script_path = APP_ROOT.'/';
 	    do{
 	       if (is_file($script_path.'__init.php')) require_once $script_path.'__init.php';
-	       $temp_ = array_shift($path_array);
-	       empty($temp_) || $script_path .= $temp_.'/';
-	       empty($path_array) && is_file($script_path.'__init.php') && require_once $script_path.'__init.php';
+	       if(!empty($path_array)){
+	           $temp_ = array_shift($path_array);
+	           if(!empty($temp_)){
+	               $script_path .= $temp_.'/';
+	               empty($path_array) && is_file($script_path.'__init.php') && require_once $script_path.'__init.php';
+	           }
+	           
+	       }
 	    }while(!empty($path_array));
 	    unset($path_array);
-	    if($script_path.$script_name == $_SERVER['SCRIPT_FILENAME']) {echo '/**error**/';exit;}
-	    if (is_file($script_path.$script_name)) {     
-	        require_once $script_path.$script_name;
+	    if($script_path.$script_name.'.php' == $_SERVER['SCRIPT_FILENAME']) {echo '/**error**/';exit;}
+	    if (is_file($script_path.$script_name.'.php')) {     
+	        require_once $script_path.$script_name.'.php';
 	    }else{
 	        _404();
 	    }
@@ -525,10 +565,7 @@ class ps {
 	 * app文件夹
 	 */
 	public static function app_path(){
-	    static $configs = array();
-	    if (!empty($configs)) {
-	        return  isset($configs[HTTP_HOST]) ? $configs[HTTP_HOST] : DEFAULT_APP;
-	    }
+
 	    $config_file = PHPSTART_ROOT.'/__config/vhosts.ini.php';
         if (is_file($config_file)) {
             $configs = include $config_file;
@@ -540,6 +577,27 @@ class ps {
         }else{
             return  trim(DEFAULT_APP,'/');
         }
+	}
+	/**
+	 * app前置GET变量
+	 */
+	public static function app_pre_get(){
+
+	    $config_file = PHPSTART_ROOT.'/__config/vhosts.ini.php';
+	    if (is_file($config_file)) {
+	        $configs = include $config_file;
+	        foreach($configs as $app){
+	            if($app['host'] == HTTP_HOST){
+	                if(isset($app['get'])) return $app['get'];
+	            }
+	            if(@preg_match('/'.trim($app['host'],'/').'/',HTTP_HOST)){
+	                if(isset($app['get'])) return $app['get'];
+	            }
+	        }
+	        return  array();
+	    }else{
+	        return  array();
+	    }
 	}
 	/**
 	 * 初始化程序目录

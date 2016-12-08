@@ -39,7 +39,7 @@ class index{
         $student = M('student');
         $student->lists();
     }
-    function myfun(){
+    function myfunc(){
         echo "new index()->myfunc()<br />";
         F('myfunc');
         myname();
