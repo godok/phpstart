@@ -232,8 +232,8 @@ function show_error($msg = 'error'){
 * @param string $path 路径
 * @param intger $initialize 是否初始化
 */
-function M($modelname, $path='',$initialize = 1) {
-    return ps::app_model($modelname, $path,$initialize);
+function M($modelname, $path='',$initialize = 1,$namespace='__model') {
+    return ps::app_model($modelname, $path,$initialize,$namespace);
 }
 /**
 * 模板调用
@@ -251,8 +251,8 @@ function V($template = '', $path = '') {
 * @param string $path 路径
 * @param intger $initialize 是否初始化
 */
-function C($classname, $path='',$initialize = 1) {
-     return ps::app_class($classname, $path,$initialize);
+function C($classname, $path='',$initialize = 1,$namespace='__class') {
+     return ps::app_class($classname, $path,$initialize,$namespace);
 }
 /**
 * 加载app函数库

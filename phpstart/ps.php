@@ -72,12 +72,12 @@ $params = array();
 
 while(!empty($path_array)){
     $temp_ = trim(implode('/',$path_array),'/');
-    $script_name = APP_ROOT.'/'.$temp_.'/index.php';
-    if(empty($params) && is_file($script_name)){
+    $script_name = APP_ROOT.'/'.$temp_.'.php';
+    $script_name2 = APP_ROOT.'/'.$temp_.'/index.php';
+    if(empty($params) && !is_file($script_name) && is_file($script_name2)){
         define('SCRIPT_NAME','index');//请求的php脚本
         break;
     }
-    $script_name = APP_ROOT.'/'.$temp_.'.php';
     if(is_file($script_name)){
         define('SCRIPT_NAME',array_pop($path_array));//请求的php脚本
         break;
@@ -355,7 +355,7 @@ class ps {
 	 * @param string 路径
 	 * @param intger 是否初始化
 	 */
-	public static function app_class($classname, $path='',$initialize = 1) {
+	public static function app_class($classname, $path='',$initialize = 1,$namespace='__class') {
 	    static $classes = array();
 	
 	    if (empty($path)) $path = SCRIPT_PATH;
@@ -387,7 +387,13 @@ class ps {
 	            if (!isset($classes[$key2])) require_once $script_name;
 	    
 	            if ($initialize) {
-    	            if(class_exists($classname)){
+	                $classname_class = $classname."_class";
+	                $classname_name = "\\".$namespace."\\".$classname;
+    	            if(class_exists($classname_class)){
+	                    $classes[$key] = $classes[$key2] = new $classname_class;
+	                }elseif(class_exists($classname_name)){
+	                    $classes[$key] = $classes[$key2] = new $classname_name;
+	                }elseif(class_exists($classname)){
     			        $classes[$key] = $classes[$key2] = new $classname;
     			    }else{
     			        $classes[$key] = $classes[$key2] = false;
@@ -411,7 +417,7 @@ class ps {
 	 * @param string 路径
 	 * @param intger 是否初始化
 	 */
-	public static function app_model($modelname, $path='',$initialize = 1) {
+	public static function app_model($modelname, $path='',$initialize = 1,$namespace='__model') {
 	    static $models = array();
 	   
 	    if (empty($path)) $path = SCRIPT_PATH;
@@ -439,7 +445,13 @@ class ps {
 	            $key2 = md5($script_name);
 	            if (!isset($models[$key2])) require_once $script_name;
 	            if ($initialize) {
-	                if(class_exists($modelname)){
+	                $modelname_mod = $modelname."_mod";
+	                $modelname_name = "\\".$namespace."\\".$modelname;
+	                if(class_exists($modelname_mod)){
+	                    $models[$key] = $models[$key2] = new $modelname_mod;
+	                }elseif(class_exists($modelname_name)){
+	                    $models[$key] = $models[$key2] = new $modelname_name;
+	                }elseif(class_exists($modelname)){
 	                    $models[$key] = $models[$key2] = new $modelname;
 	                }else{
 	                    $models[$key] = $models[$key2] = false;

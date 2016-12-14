@@ -16,6 +16,10 @@ return array(
 			'username'=>'admin'
 		)
 		*/
+	),
+	array(
+		'host'=>'yy.mobi',
+		'path'=>'app'
 	)
 );
 ?>

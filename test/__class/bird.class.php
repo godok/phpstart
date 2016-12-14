@@ -1,12 +1,13 @@
 <?php
+namespace animals;
 defined('IS_RUN') or exit('/**error:404**/');
 echo 'loading : '.__FILE__.'<br />';
-class dog_class{
+class bird{
     public function __construct() {
-        echo "dog_class...<br />";
+        echo "animals\\bird...<br />";
     }
     function talk(){
-        echo "i am dog<br />";
+       echo 'i am a bird';
     }
 }
 ?>
