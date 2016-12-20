@@ -19,7 +19,7 @@ function pdo($con = null) {
 	if(isset($db[$con])) {
 	   return $db[$con];
 	}
-	ps::sys_class('db',0);
+	PS::sysClass('db',0);
 	$db[$con] = new DB($con);
 	return $db[$con];
 }

@@ -1,7 +1,7 @@
 <?php
 defined('IS_RUN') or exit('/**error:404**/');
 echo 'loading : '.__FILE__.'<br />';
-class group1{
+class Group1{
     public function __construct() {
     
     }

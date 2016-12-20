@@ -1,9 +1,9 @@
 <?php
 defined('IS_RUN') or exit('/**error:404**/');
 echo 'loading : '.__FILE__.'<br />';
-class index{
+class Index{
     public function __construct() {
-    
+        
     }
     function index(){
         echo "new index()->index()<br />";
@@ -51,7 +51,7 @@ class index{
     }
     function cfg(){
         echo "new index()->cfg()<br />";
-        $student = ps::app_config('student.lists');
+        $student = PS::appConfig('student.lists');
         echo $student;
     }
     function template(){
@@ -59,11 +59,11 @@ class index{
         echo '<br />';
         include V('helloworld','group2');
     }
-    function get_cache(){
-        print_r( ps::get_cache('menu') );
+    function getCache(){
+        print_r( PS::getCache('menu') );
     }
-    function put_cache(){
-        echo 'filesize:'.ps::put_cache('menu',array('home','book'));
+    function putCache(){
+        echo 'filesize:'.PS::putCache('menu',array('home','book'));
     }
 }
 ?>

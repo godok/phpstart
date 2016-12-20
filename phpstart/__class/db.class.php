@@ -25,7 +25,7 @@ class DB {
 	}
 
 	public function __construct($name = 'master') {
-		$this->cfg = ps::app_config('database.'.$name);
+		$this->cfg = PS::appConfig('database.'.$name);
 
 		$this->connect($name);
 	}
@@ -45,12 +45,12 @@ class DB {
 				$options = array(PDO::ATTR_PERSISTENT => $cfg['pconnect']);
 			} else {
 				if(!class_exists('_PDO')) {
-					ps::sys_class('PDO',0);
+					PS::sysClass('PDO',0);
 				}
 				$dbclass = '_PDO';
 			}
 		} else {
-			ps::sys_class('PDO',0);
+			PS::sysClass('PDO',0);
 			$dbclass = 'PDO';
 		}
 		$this->pdo = new $dbclass($dsn, $cfg['username'], $cfg['password'], $options);
@@ -412,7 +412,7 @@ class DB {
 		if (strpos($sql, 'core_performance') > 0) {
 			return false;
 		}
-		$maxtimesql = ps::app_config("database.maxtime");
+		$maxtimesql = PS::appConfig("database.maxtime");
 		!$maxtimesql && $maxtimesql=6;
 
 		if ($runtime > $maxtimesql) {

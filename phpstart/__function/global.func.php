@@ -27,7 +27,7 @@ function script_path($file){
 function my_error_handler($errno, $errstr, $errfile, $errline) {
    if($errno==8) return '';
    $errfile = str_replace(DOCUMENT_ROOT,'',str_replace('\\','/',$errfile));
-   if(ps::app_config('system.errorlog')) {
+   if(PS::appConfig('system.errorlog')) {
 	   error_log('<?php exit;?>'.date('m-d H:i:s',SYS_TIME).' | '.$errno.' | '.str_pad($errstr,30).' | '.$errfile.' | '.$errline."\r\n", 3, CACHE_PATH.'error_log.php');
    } else {
 	   $str = "<span>errorno:' . $errno . ',str:' . $errstr . ',file:<font color='blue'>' . $errfile . '</font>,line' . $errline .'<br /></span>";
@@ -58,7 +58,7 @@ function get_array_value($data,$key_array,$default){
 */
 function set_cookie($key, $value, $expire = '',$path='',$domain='',$httponly = '') {
 
-   $config = ps::app_config('system.cookie');
+   $config = PS::appConfig('system.cookie');
    $expire = $expire != '' ? $expire :  $config['expire'];
    $path = $path != '' ? $path :  $config['path'];
    $domain = $domain != '' ? $domain :  $config['domain'];
@@ -71,7 +71,7 @@ function set_cookie($key, $value, $expire = '',$path='',$domain='',$httponly = '
 * 读cookie
 */
 function get_cookie($key) {
-   $config = ps::app_config('system.cookie');
+   $config = PS::appConfig('system.cookie');
   
    return isset($_COOKIE[$config['pre'].$key])  ? $_COOKIE[$config['pre'].$key] : false;
 }
@@ -93,32 +93,9 @@ function CK($key, $value=NULL, $expire = '',$path='',$domain='',$httponly = '') 
 * @param $template
 * @param $path
 */
-function template($template='', $path = '') {
-   if(empty($template)) $template = ACTION;
-   if (empty($path)) $path = SCRIPT_PATH;
-   if(substr($template,-4) != '.php' && substr($template,-5) != '.html') $template.='.html';
-   if(substr($template,0,1) == '/'){
-	   $tpl_file = APP_ROOT.'/__tpl'.$template;
-	   
-   }else{
-	   $path_array = empty($path) ? array('') : explode('/','/'.$path);
-	   //从脚本所在目录开始往上遍历
-	   while(!empty($path_array)){
-		   $temp_ = implode('/',$path_array);
-		   $tpl_file =empty($temp_) ? APP_ROOT.'/__tpl/'.$template : APP_ROOT.'/'.implode('/',$path_array).'/__tpl/'.$template;
-		   if (is_file($tpl_file)) break;
-		   array_pop($path_array);
-	   };
-   }
-   
-   if(!is_file($tpl_file)) $tpl_file = PHPSTART_ROOT.'/__tpl/'.trim($template,'/');
-   if(!is_file($tpl_file)) show_error('templatefile:'.str_replace(DOCUMENT_ROOT,'',$tpl_file)." is not exists!");
-   $cache_file = CACHE_PATH.'/tpl/'.md5($tpl_file).'.cache.php';
-   if(!is_file($cache_file) ||  filemtime($tpl_file) > filemtime($cache_file)) {
-	   $template_cache = ps::sys_class('template');
-	   $template_cache->refresh($tpl_file, $cache_file);
-   }
-   return $cache_file;
+function template($template='', $path = '',$class = 'Template') {
+   $template = PS::sysClass($class);
+   return $template->parseFile($template='', $path = '');
 }
 /**
 * 提示信息页面跳转，跳转地址如果传入数组，页面会提示多个地址供用户选择，默认跳转地址为数组的第一个值，时间为3秒。
@@ -222,7 +199,7 @@ function ret_json($retData=array(),$retMsg='success' , $errNum=0,$charset = '') 
 */
 function show_error($msg = 'error'){
     $str = '<html><head><title>error_message</title><style>body {	background-color: #fff;	margin: 30px;	font: 13px/20px ;	color: #333;}a {	color: #039;	background-color: transparent;	font-weight: normal;}h1 {	color: #fff;	background-color: #d9534f;	border-bottom: 1px solid #D0D0D0;	font-size: 19px;	font-weight: normal;	margin: 0 0 14px 0;	padding: 14px 15px;}#container {	margin: 10px;	border: 1px solid #D0D0D0;	-webkit-box-shadow: 0 0 8px #D0D0D0;}p {	margin: 12px 15px 12px 15px;}</style></head><body>	<div id="container">		<h1>Error!</h1>		<p>'.$msg.'</p></div></body></html>';
-    if(ps::app_config("system.debug")) echo $str;
+    if(PS::appConfig("system.debug")) echo $str;
     exit;
     
 }
@@ -232,8 +209,8 @@ function show_error($msg = 'error'){
 * @param string $path 路径
 * @param intger $initialize 是否初始化
 */
-function M($modelname, $path='',$initialize = 1,$namespace='__model') {
-    return ps::app_model($modelname, $path,$initialize,$namespace);
+function M($modelname, $path='',$initialize = 1,$namespace='__Model') {
+    return PS::appModel($modelname, $path,$initialize,$namespace);
 }
 /**
 * 模板调用
@@ -242,8 +219,8 @@ function M($modelname, $path='',$initialize = 1,$namespace='__model') {
 * @param $istag
 * @return unknown_type
 */
-function V($template = '', $path = '') {
-  return template($template, $path );
+function V($template = '', $path = '',$class = 'Template') {
+  return template($template, $path ,$class);
 }
 /**
 * 加载app类方法
@@ -251,8 +228,8 @@ function V($template = '', $path = '') {
 * @param string $path 路径
 * @param intger $initialize 是否初始化
 */
-function C($classname, $path='',$initialize = 1,$namespace='__class') {
-     return ps::app_class($classname, $path,$initialize,$namespace);
+function C($classname, $path='',$initialize = 1,$namespace='__Class') {
+     return PS::appClass($classname, $path,$initialize,$namespace);
 }
 /**
 * 加载app函数库
@@ -260,7 +237,7 @@ function C($classname, $path='',$initialize = 1,$namespace='__class') {
 * @param string $path 路径
 */
 function F($functionname, $path='') {
-	return ps::app_func($functionname, $path);
+	return PS::appFunc($functionname, $path);
 }
 /**
  * 加载app类库
@@ -268,7 +245,7 @@ function F($functionname, $path='') {
  * @param string $path 路径
  */
 function L($functionname, $path='') {
-    return ps::app_lib($functionname, $path);
+    return PS::appLib($functionname, $path);
 }
 /**
 * 加载配置文件
@@ -278,7 +255,7 @@ function L($functionname, $path='') {
 * @param boolean $reload 强制重新加载。
 */
 function S($key = '',$path = '', $default = '', $reload = false) {
-    return ps::app_config( $key ,$path, $default, $reload );
+    return PS::appConfig( $key ,$path, $default, $reload );
 }
 /**
 * 跳转页面

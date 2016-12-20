@@ -1,7 +1,7 @@
 <?php
 defined('IS_RUN') or exit('/**error:404**/');
 echo 'loading : '.__FILE__.'<br />';
-class index{
+class Index{
     public function __construct() {
     
     }
@@ -13,7 +13,7 @@ class index{
 		$ds = (int)date("s",$time);//秒
 		$yci = "-".$ds;//分钟延迟
 		$ych =  "-".$di*60+$ds;//小时延迟
-		$words = ps::app_config('words');
+		$words = PS::appConfig('words');
         include V();
     }
     function ck(){

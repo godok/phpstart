@@ -1,10 +1,10 @@
 <?php
-namespace __class;
+namespace __Class;
 defined('IS_RUN') or exit('/**error:404**/');
 echo 'loading : '.__FILE__.'<br />';
-class fish{
+class Fish{
     public function __construct() {
-        echo "__class\\fish...<br />";
+        echo "__Class\\fish...<br />";
     }
     function talk(){
        echo 'eating fish';

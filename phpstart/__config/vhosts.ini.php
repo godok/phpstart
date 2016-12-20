@@ -10,7 +10,7 @@ return array(
 //程序目录绑定
 	array(
 		'host'=>'127.0.0.1',
-		'path'=>'test',
+		'path'=>'Test',
 		/*
 		'get'=>array(
 			'username'=>'admin'
@@ -19,7 +19,7 @@ return array(
 	),
 	array(
 		'host'=>'yy.mobi',
-		'path'=>'app'
+		'path'=>'App'
 	)
 );
 ?>
