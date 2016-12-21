@@ -87,16 +87,7 @@ function CK($key, $value=NULL, $expire = '',$path='',$domain='',$httponly = '') 
    }
    
 }
-/**
-* 模板调用
-*
-* @param $template
-* @param $path
-*/
-function template($template='', $path = '',$class = 'Template') {
-   $template = PS::sysClass($class);
-   return $template->parseFile($template='', $path = '');
-}
+
 /**
 * 提示信息页面跳转，跳转地址如果传入数组，页面会提示多个地址供用户选择，默认跳转地址为数组的第一个值，时间为3秒。
 * @param string 消息
@@ -112,7 +103,7 @@ function message($retMsg='error' ,$errNum=1, $url_forward = '',   $ms = 3000) {
         );
         ret_json($retData,$retMsg, $errNum);
     }
-    include(template('/message'));
+    include(V('/message'));
 	exit;
 }
 
@@ -219,8 +210,9 @@ function M($modelname, $path='',$initialize = 1,$namespace='__Model') {
 * @param $istag
 * @return unknown_type
 */
-function V($template = '', $path = '',$class = 'Template') {
-  return template($template, $path ,$class);
+function V($tpl = '', $path = '',$class = 'Template') {
+  $template = PS::sysClass($class);
+  return $template->parseFile($tpl, $path);
 }
 /**
 * 加载app类方法

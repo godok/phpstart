@@ -8,26 +8,26 @@ final class Template {
     /**
      * 编译模版并返回编译后的模版文件路径
      */
-    public function parseFile($template='', $path = ''){
-        if(empty($template)) $template = ACTION;
+    public function parseFile($tpl='', $path = ''){
+        if(empty($tpl)) $tpl = ACTION;
         if (empty($path)) $path = SCRIPT_PATH;
-        if(substr($template,-4) != '.php' && substr($template,-5) != '.html') $template.='.html';
-        if(substr($template,0,1) == '/'){
-            $tpl_file = APP_ROOT.'/__Tpl'.$template;
+        if(substr($tpl,-4) != '.php' && substr($tpl,-5) != '.html') $tpl.='.html';
+        if(substr($tpl,0,1) == '/'){
+            $tpl_file = APP_ROOT.'/__Tpl'.$tpl;
         
         }else{
             $path_array = empty($path) ? array('') : explode('/','/'.$path);
             //从脚本所在目录开始往上遍历
             while(!empty($path_array)){
                 $temp_ = implode('/',$path_array);
-                $tpl_file =empty($temp_) ? APP_ROOT.'/__Tpl/'.$template : APP_ROOT.'/'.implode('/',$path_array).'/__Tpl/'.$template;
+                $tpl_file =empty($temp_) ? APP_ROOT.'/__Tpl/'.$tpl : APP_ROOT.'/'.implode('/',$path_array).'/__Tpl/'.$tpl;
                 if (is_file($tpl_file)) break;
                 array_pop($path_array);
             };
         }
          
-        if(!is_file($tpl_file)) $tpl_file = PHPSTART_ROOT.'/__Tpl/'.$template;
-        if(!is_file($tpl_file)) show_error('templatefile:'.str_replace(DOCUMENT_ROOT,'',$tpl_file)." is not exists!");
+        if(!is_file($tpl_file)) $tpl_file = PHPSTART_ROOT.'/__Tpl/'.$tpl;
+        if(!is_file($tpl_file)) show_error('templatefile:'.$path.'/__Tpl/'.$tpl." is not exists!");
         $cache_file = CACHE_PATH.'/Tpl/'.md5($tpl_file).'.cache.php';
         if(!is_file($cache_file) ||  filemtime($tpl_file) > filemtime($cache_file)) {
             $this->refresh($tpl_file, $cache_file);

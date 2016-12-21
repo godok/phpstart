@@ -10,20 +10,20 @@ class Dog{
         echo "WangWang";
     }
     function mod(){
-        $dog = M('dog');
+        $dog = M('Dog');
         $dog->lists();
 
     }
     function talk(){
-        $dog = C('dog');
+        $dog = C('Dog');
         $dog->talk();
     }
     function eat(){
-        $dog = C('fish');
+        $dog = C('Fish');
         $dog->talk();
     }
     function bird(){
-        $bird = C('bird',null,1,'animals');
+        $bird = C('Bird',null,1,'animals');
         $bird->talk();
     }
    

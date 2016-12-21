@@ -5,10 +5,10 @@ echo 'loading : '.__FILE__.'<br />';
 
 class Dog{
     public function __construct() {
-        echo "__model\\dog...<br />";
+        echo "__model\\Dog...<br />";
     }
     function lists(){
-        $book = M('book');
+        $book = M('Book');
        $book->lists();
     }
 }

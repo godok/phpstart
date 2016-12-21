@@ -5,6 +5,9 @@ class Index{
     public function __construct() {
     
     }
+    function php(){
+        phpinfo();
+    }
     function index(){
 		ob_end_clean();
 		$time = time();
@@ -58,7 +61,7 @@ class Index{
         );
 
 
-        ret_xml(array('cat','dog'));
+        ret_xml($books);
     }
     function xml2array(){
         ob_end_clean();

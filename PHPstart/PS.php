@@ -14,7 +14,7 @@ define('SYS_TIME', time());
 defined('PHPSTART_VERSION') or define('PHPSTART_VERSION', '1.0');//版本号
 defined('DEFAULT_APP') or define('DEFAULT_APP', 'test');//默认APP目录
 define('PHPSTART_ROOT', dirname(__FILE__));//phpstart内核目录
-defined('DOCUMENT_ROOT') or define('DOCUMENT_ROOT', trim(str_replace('\\','/',$_SERVER['SCRIPT_FILENAME']),'/'));//phpstart项目根目录
+defined('DOCUMENT_ROOT') or define('DOCUMENT_ROOT', rtrim(str_replace('\\','/',$_SERVER['SCRIPT_FILENAME']),'/'));//phpstart项目根目录
 define('HTTP_HOST', (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ''));
 define('HTTP_REFERER', isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '');
 if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')
@@ -490,7 +490,7 @@ final class PS {
 	    $path = trim($path,'/');
 	    if (empty($path)) $path = APP_PATH;
 	    if(substr($filename,-10) != '.cache.php') $filename.='.cache.php';
-	    $file = DOCUMENT_ROOT.'/'.$path.'/__cache/'.$filename;
+	    $file = DOCUMENT_ROOT.'/'.$path.'/__Cache/'.$filename;
 	    $data = "<?php\ndefined('IS_RUN') or exit('/**error:404**/');\nreturn ".var_export($data, true).";\n?>";
 	    $size = @file_put_contents($file, $data, LOCK_EX);
 	    return $size ? $size : 'false';
@@ -589,16 +589,16 @@ final class PS {
 	    while(!empty($path_array)){
 	        $temp_ = trim(implode('/',$path_array),'/');
 	        $script_name = APP_ROOT.'/'.$temp_.'.php';
-	        $script_name2 = APP_ROOT.'/'.$temp_.'/Index.php';
-	        //判断路由变量对应的目录下是否有Index.php
-	        if(empty($params) && !is_file($script_name) && is_file($script_name2)){
-	            define('SCRIPT_NAME','Index');
-	            break;
-	        }
 	        //判断路由变量是否是php脚本文件
 	        if(is_file($script_name)){
 	            define('SCRIPT_NAME',array_pop($path_array));//请求的php脚本名
 	            array_pop($path_array_real);
+	            break;
+	        }
+	        $script_name2 = APP_ROOT.'/'.$temp_.'/Index.php';
+	        //判断路由变量对应的目录下是否有Index.php
+	        if(empty($params) && !is_file($script_name) && is_file($script_name2)){
+	            define('SCRIPT_NAME','Index');
 	            break;
 	        }
 	        //往上一层遍历
