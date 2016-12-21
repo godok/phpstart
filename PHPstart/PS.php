@@ -73,8 +73,8 @@ final class PS {
 	    $funname = ACTION;
 		//加载php脚本
 	    self::loadScript($classname);
-	    if(class_exists($classname)){ 
-	        $obj = new $classname;
+	    if(isset($classname2) && class_exists($classname2)){
+	        $obj = new $classname2;
 	        if(method_exists($obj,$funname)){
 	            if(empty($params)){
 	                $obj->$funname();
@@ -82,8 +82,8 @@ final class PS {
 	                call_user_func_array(array($obj,$funname),$params);
 	            }
 	        }
-	    }elseif(isset($classname2) && class_exists($classname2)){
-	        $obj = new $classname2;
+	    }elseif(class_exists($classname)){ 
+	        $obj = new $classname;
 	        if(method_exists($obj,$funname)){
 	            if(empty($params)){
 	                $obj->$funname();
