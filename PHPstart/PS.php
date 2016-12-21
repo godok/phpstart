@@ -324,10 +324,10 @@ final class PS {
 	            if ($initialize) {
 	                $classname_class = $classname."_class";
 	                $classname_name = "\\".$namespace."\\".$classname;
-    	            if(class_exists($classname_class)){
-	                    $classes[$key] = $classes[$key2] = new $classname_class;
-	                }elseif(class_exists($classname_name)){
+	                if(class_exists($classname_name)){
 	                    $classes[$key] = $classes[$key2] = new $classname_name;
+	                }elseif(class_exists($classname_class)){
+	                    $classes[$key] = $classes[$key2] = new $classname_class;
 	                }elseif(class_exists($classname)){
     			        $classes[$key] = $classes[$key2] = new $classname;
     			    }else{
