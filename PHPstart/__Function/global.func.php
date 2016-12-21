@@ -246,7 +246,7 @@ function L($functionname, $path='') {
 * @param string $default  默认配置。当获取配置项目失败时该值发生作用。
 * @param boolean $reload 强制重新加载。
 */
-function S($key = '',$path = '', $default = '', $reload = false) {
+function CFG($key = '',$path = '', $default = '', $reload = false) {
     return PS::appConfig( $key ,$path, $default, $reload );
 }
 /**

@@ -1,5 +1,5 @@
 <?php
-namespace Group2;
+namespace Test\Group2;
 defined('IS_RUN') or exit('/**error:404**/');
 echo 'loading : '.__FILE__.'<br />';
 class Index{

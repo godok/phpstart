@@ -66,9 +66,10 @@ final class PS {
 	    if($runtimes) return false;
 	    $runtimes = true;
 	    $classname = CONTROLLER;
+	    $classname2 = APP_PATH;
 	    if(SCRIPT_PATH !=''){
 	        //带名字空间的控制器名
-	        $classname2 = str_replace('/','\\',SCRIPT_PATH).'\\'.CONTROLLER;
+	        $classname2 .= '\\'.str_replace('/','\\',SCRIPT_PATH).'\\'.CONTROLLER;
 	    }
 	    $funname = ACTION;
 		//加载php脚本
@@ -380,7 +381,7 @@ final class PS {
 	            $key2 = md5($script_name);
 	            if (!isset($models[$key2])) require_once $script_name;
 	            if ($initialize) {
-	                $modelname_mod = $modelname."_model";
+	                $modelname_mod = $modelname."_mod";
 	                $modelname_name = "\\".$namespace."\\".$modelname;
 	                if(class_exists($modelname_mod)){
 	                    $models[$key] = $models[$key2] = new $modelname_mod;

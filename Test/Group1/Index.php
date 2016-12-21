@@ -51,7 +51,7 @@ class Index{
     }
     function cfg(){
         echo "new index()->cfg()<br />";
-        $student = PS::appConfig('student.lists');
+        $student = CFG('student.lists');
         echo $student;
     }
     function template(){
