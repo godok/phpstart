@@ -1,0 +1,1 @@
+<?php defined('IS_RUN') or exit('No permission resources.'); ?>test/group2/tpl/helloworld.html
