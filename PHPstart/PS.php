@@ -66,11 +66,24 @@ final class PS {
 	    if($runtimes) return false;
 	    $runtimes = true;
 	    $classname = CONTROLLER;
+	    if(SCRIPT_PATH !=''){
+	        //带名字空间的控制器名
+	        $classname2 = str_replace('/','\\',SCRIPT_PATH).'\\'.CONTROLLER;
+	    }
 	    $funname = ACTION;
 		//加载php脚本
 	    self::loadScript($classname);
 	    if(class_exists($classname)){ 
 	        $obj = new $classname;
+	        if(method_exists($obj,$funname)){
+	            if(empty($params)){
+	                $obj->$funname();
+	            }else{
+	                call_user_func_array(array($obj,$funname),$params);
+	            }
+	        }
+	    }elseif(isset($classname2) && class_exists($classname2)){
+	        $obj = new $classname2;
 	        if(method_exists($obj,$funname)){
 	            if(empty($params)){
 	                $obj->$funname();
