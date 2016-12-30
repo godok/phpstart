@@ -45,7 +45,7 @@ PS::appConfig('system.debug') ? error_reporting(E_ALL) : error_reporting(0);
 PS::appConfig('system.errorlog') && set_error_handler('my_error_handler');
 //判断程序目录是否存在
 if (!is_dir(APP_ROOT)){
-    _404();exit;
+    echo 'not found!';exit;
 }
 //判断程序目录是否已初始化，如果未初始化则执行初始化
 if (!is_file(APP_ROOT.'/__Config/database.ini.php')){
@@ -510,57 +510,61 @@ final class PS {
 	    return $size ? $size : 'false';
 	}
 	/**
+	 * 通过获取app
+	 */
+	public static function getApp(){
+	    static $app=null;
+	    if($app !== null) return $app;
+	    $configs = PS::sysConfig("vhosts");
+	    if (!empty($configs)) {
+	        foreach($configs as $site){
+	            if($site['host'] == HTTP_HOST){
+	                $app = $site;
+	                return $app;
+	            }
+	            if(@preg_match('/'.trim($site['host'],'/').'/',HTTP_HOST)){
+	                $app = $site;
+	                return $app;
+	            }
+	        }
+	    }
+	    $app = false;
+	    return $app;
+	}
+	/**
 	 * app文件夹
 	 */
 	public static function appName(){
-	    static $appname = null;
-	    if($appname !== null) return $appname;
-	    $config_file = PHPSTART_ROOT.'/__Config/vhosts.ini.php';
-        if (is_file($config_file)) {
-            $configs = include $config_file;
-            foreach($configs as $app){
-                if($app['host'] == HTTP_HOST){
-                    $appname = trim($app['path'],'/');
-                    return $appname;
-                }
-                if(@preg_match('/'.trim($app['host'],'/').'/',HTTP_HOST)){
-                    $appname = trim($app['path'],'/');
-                    return $appname;
-                }
-            }
-            $appname = trim(DEFAULT_APP,'/');
-        }else{
-            $appname = trim(DEFAULT_APP,'/');
+	    $app = PS::getApp();
+        if (is_array($app) && isset($app['path'])) {
+            return trim($app['path'],'/');
         }
-        return $appname;
+        return trim(DEFAULT_APP,'/');
 	}
 	/**
 	 * app前置GET变量
 	 */
 	public static function appPreGet(){
-
-	    $config_file = PHPSTART_ROOT.'/__Config/vhosts.ini.php';
-	    if (is_file($config_file)) {
-	        $configs = include $config_file;
-	        foreach($configs as $app){
-	            if($app['host'] == HTTP_HOST){
-	                if(isset($app['get'])) return $app['get'];
-	            }
-	            if(@preg_match('/'.trim($app['host'],'/').'/',HTTP_HOST)){
-	                if(isset($app['get'])) return $app['get'];
-	            }
-	        }
-	        return  array();
-	    }else{
-	        return  array();
+	    $app = PS::getApp();
+	    if (is_array($app) && isset($app['gets']) && is_array($app['gets'])) {
+	        return $app['gets'];
 	    }
+	    return array();
 	}
 	/**
 	 * URL路由处理
 	 */
 	public static function urlRouter(){
 	    //环境变量PATH_INFO作为路由变量
-	    $path_info = isset($_SERVER['PATH_INFO']) ? str_replace('\\','/',$_SERVER['PATH_INFO']) : '';
+	    $app = PS::getApp();
+	    if (is_array($app) && isset($app['router'])) {
+	        $path_info = str_replace('\\','/',$app['router']);
+	    }else{
+	        $path_info = isset($_SERVER['PATH_INFO']) ? str_replace('\\','/',$_SERVER['PATH_INFO']) : '';
+	    }
+	    if(strtolower(substr($path_info,-9)) == 'index.php'){
+	        $path_info = substr($path_info,0,-4);
+	    }
 	    //“.”和“/”都作为单词分隔符
 	    $path_info = str_replace('.','/',$path_info);
 	    //去掉首尾的单词分隔符，并把路由变量转成单词数组
